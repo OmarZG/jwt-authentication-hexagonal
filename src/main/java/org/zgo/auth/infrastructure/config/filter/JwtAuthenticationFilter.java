@@ -1,4 +1,4 @@
-package org.zgo.auth.infrastructure.web.filter;
+package org.zgo.auth.infrastructure.config.filter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

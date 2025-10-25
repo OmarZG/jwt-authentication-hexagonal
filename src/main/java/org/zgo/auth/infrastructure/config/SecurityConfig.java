@@ -16,8 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
-import org.zgo.auth.infrastructure.web.exception.JwtAuthenticationEntryPoint;
-import org.zgo.auth.infrastructure.web.filter.JwtAuthenticationFilter;
+import org.zgo.auth.infrastructure.config.filter.JwtAuthenticationFilter;
 import org.zgo.auth.infrastructure.service.UserDetailsServiceImpl;
 
 @Configuration

@@ -1,4 +1,4 @@
-package org.zgo.auth.infrastructure.web.exception;
+package org.zgo.auth.infrastructure.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;

@@ -1,0 +1,217 @@
+{
+  "info": {
+    "name": "JWT Auth (org.zgo.auth) - Local",
+    "description": "Colección para probar endpoints: register, login, me, admin, refresh (rotación) y revoke. Define Environment con variable baseUrl (http://localhost:8080).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "version": "1.0.0"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "accessToken", "value": "" },
+    { "key": "refreshToken", "value": "" },
+    { "key": "username", "value": "" },
+    { "key": "password", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Register (create user)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"alice\",\n  \"email\": \"alice@example.com\",\n  \"password\": \"secret\",\n  \"roles\": [\"USER\"]\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/register",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","auth","register"]
+        }
+      },
+      "response": [],
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 200) {",
+              "  var json = pm.response.json();",
+              "  if (json.accessToken) pm.environment.set('accessToken', json.accessToken);",
+              "  if (json.refreshToken) pm.environment.set('refreshToken', json.refreshToken);",
+              "  try {",
+              "    var body = JSON.parse(pm.request.body.raw);",
+              "    if (body.username) pm.environment.set('username', body.username);",
+              "    if (body.password) pm.environment.set('password', body.password);",
+              "  } catch(e) {}",
+              "}",
+              "pm.test('Status is 200', function(){ pm.response.to.have.status(200); });"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"username\": \"alice\",\n  \"password\": \"secret\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/login",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","auth","login"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 200) {",
+              "  var json = pm.response.json();",
+              "  if (json.accessToken) pm.environment.set('accessToken', json.accessToken);",
+              "  if (json.refreshToken) pm.environment.set('refreshToken', json.refreshToken);",
+              "}",
+              "pm.test('Status is 200', function(){ pm.response.to.have.status(200); });"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Me (get current user)",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            { "key": "token", "value": "{{accessToken}}", "type": "string" }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/me",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","auth","me"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status is 200', function(){ pm.response.to.have.status(200); });",
+              "try{ var json = pm.response.json(); if(json.username) pm.environment.set('username', json.username);}catch(e){}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin (requires ROLE_ADMIN)",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            { "key": "token", "value": "{{accessToken}}", "type": "string" }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/admin",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","auth","admin"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// Expect 200 if admin, 403 if user without admin",
+              "pm.test('Status is 2xx or 403', function(){",
+              "  pm.expect(pm.response.code === 200 || pm.response.code === 403).to.be.true;",
+              "});",
+              "if (pm.response.code === 200) pm.test('Body is Hello, admin!', function(){ pm.response.to.have.body('Hello, admin!'); });"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Refresh (rotate refresh token)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/refresh",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","auth","refresh"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "if (pm.response.code === 200) {",
+              "  var json = pm.response.json();",
+              "  if (json.accessToken) pm.environment.set('accessToken', json.accessToken);",
+              "  if (json.refreshToken) pm.environment.set('refreshToken', json.refreshToken);",
+              "}",
+              "pm.test('Status is 200', function(){ pm.response.to.have.status(200); });"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Revoke refresh token",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/auth/revoke",
+          "host": ["{{baseUrl}}"],
+          "path": ["api","auth","revoke"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status is 204', function(){ pm.response.to.have.status(204); });"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    }
+  ]
+}

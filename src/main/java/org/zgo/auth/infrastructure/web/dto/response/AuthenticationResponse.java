@@ -1,4 +1,4 @@
-package org.zgo.auth.dto.response;
+package org.zgo.auth.infrastructure.web.dto.response;
 
 public class AuthenticationResponse {
     private String accessToken;

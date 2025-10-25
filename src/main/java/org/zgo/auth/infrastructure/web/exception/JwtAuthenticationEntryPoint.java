@@ -1,4 +1,4 @@
-package org.zgo.auth.config;
+package org.zgo.auth.infrastructure.web.exception;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
@@ -8,7 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
-import org.zgo.auth.dto.response.ErrorResponse;
+import org.zgo.auth.infrastructure.web.dto.response.ErrorResponse;
 
 import java.io.IOException;
 

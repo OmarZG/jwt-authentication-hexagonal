@@ -1,4 +1,4 @@
-package org.zgo.auth.dto.request;
+package org.zgo.auth.infrastructure.web.dto.request;
 
 public class LoginRequest {
     private String username;

@@ -1,12 +1,13 @@
-package org.zgo.auth.exception;
+package org.zgo.auth.infrastructure.web.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.zgo.auth.dto.response.ErrorResponse;
+import org.zgo.auth.infrastructure.web.dto.response.ErrorResponse;
 import org.zgo.auth.exception.custom.InvalidCredentialsException;
 import org.zgo.auth.exception.custom.UserAlreadyExistsException;
 
@@ -19,17 +20,23 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse("User exists", ex.getMessage()));
     }
 
-    @ExceptionHandler(InvalidCredentialsException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidCredentials(InvalidCredentialsException ex) {
+    @ExceptionHandler({InvalidCredentialsException.class, BadCredentialsException.class})
+    public ResponseEntity<ErrorResponse> handleInvalidCredentials(Exception ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(new ErrorResponse("Invalid credentials", ex.getMessage()));
     }
 
-    // Maneja denegas de acceso (autenticado pero sin permisos) -> 403 Forbidden
-    @ExceptionHandler({AuthorizationDeniedException.class, AccessDeniedException.class})
-    public ResponseEntity<ErrorResponse> handleAccessDenied(Exception ex) {
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDenied(AccessDeniedException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(new ErrorResponse("Access Denied", ex.getMessage()));
+                .body(new ErrorResponse("Access Denied",
+                        ex.getMessage() != null ? ex.getMessage() : "You don't have permission to access this resource"));
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ErrorResponse> handleAuthentication(AuthenticationException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(new ErrorResponse("Authentication failed", ex.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)

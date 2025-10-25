@@ -1,4 +1,4 @@
-package org.zgo.auth.controller;
+package org.zgo.auth.infrastructure.web.in;
 
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.*;
 import org.zgo.auth.application.port.in.AuthUseCase;
 import org.zgo.auth.application.port.in.RefreshTokenUseCase;
 import org.zgo.auth.application.port.out.UserPersistencePort;
-import org.zgo.auth.dto.request.LoginRequest;
-import org.zgo.auth.dto.request.RefreshTokenRequest;
-import org.zgo.auth.dto.request.RegisterRequest;
-import org.zgo.auth.dto.request.RevokeRefreshRequest;
-import org.zgo.auth.dto.response.AuthenticationResponse;
-import org.zgo.auth.dto.response.UserResponse;
+import org.zgo.auth.infrastructure.web.dto.request.LoginRequest;
+import org.zgo.auth.infrastructure.web.dto.request.RefreshTokenRequest;
+import org.zgo.auth.infrastructure.web.dto.request.RegisterRequest;
+import org.zgo.auth.infrastructure.web.dto.request.RevokeRefreshRequest;
+import org.zgo.auth.infrastructure.web.dto.response.AuthenticationResponse;
+import org.zgo.auth.infrastructure.web.dto.response.UserResponse;
 
 @RestController
 @RequestMapping("/api/auth")

@@ -1,4 +1,4 @@
-package org.zgo.auth.filter;
+package org.zgo.auth.infrastructure.web.filter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -12,8 +12,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.zgo.auth.service.JwtService;
-import org.zgo.auth.service.UserDetailsServiceImpl;
+import org.zgo.auth.infrastructure.service.JwtService;
+import org.zgo.auth.infrastructure.service.UserDetailsServiceImpl;
 
 import java.io.IOException;
 import java.util.Arrays;

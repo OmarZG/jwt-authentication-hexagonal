@@ -1,4 +1,4 @@
-package org.zgo.auth.service;
+package org.zgo.auth.infrastructure.service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

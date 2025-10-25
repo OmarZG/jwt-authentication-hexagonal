@@ -1,7 +1,7 @@
 package org.zgo.auth.controller;
 
-import org.zgo.auth.dto.request.LoginRequest;
-import org.zgo.auth.dto.request.RegisterRequest;
+import org.zgo.auth.infrastructure.web.dto.request.LoginRequest;
+import org.zgo.auth.infrastructure.web.dto.request.RegisterRequest;
 import org.zgo.auth.infrastructure.persistence.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;

@@ -1,8 +1,8 @@
 package org.zgo.auth.service;
 
-import org.zgo.auth.dto.request.RegisterRequest;
-import org.zgo.auth.dto.request.RefreshTokenRequest;
-import org.zgo.auth.dto.request.RevokeRefreshRequest;
+import org.zgo.auth.infrastructure.web.dto.request.RegisterRequest;
+import org.zgo.auth.infrastructure.web.dto.request.RefreshTokenRequest;
+import org.zgo.auth.infrastructure.web.dto.request.RevokeRefreshRequest;
 import org.zgo.auth.infrastructure.persistence.entity.RefreshTokenEntity;
 import org.zgo.auth.infrastructure.persistence.repository.RefreshTokenRepository;
 import org.zgo.auth.infrastructure.persistence.repository.UserRepository;

@@ -1,14 +1,29 @@
-package org.zgo.auth.dto.request;
+package org.zgo.auth.infrastructure.web.dto.response;
 
 import java.util.List;
 
-public class RegisterRequest {
+public class UserResponse {
+    private Long id;
     private String username;
     private String email;
-    private String password;
     private List<String> roles;
 
-    public RegisterRequest() {
+    public UserResponse() {
+    }
+
+    public UserResponse(Long id, String username, String email, List<String> roles) {
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.roles = roles;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getUsername() {
@@ -25,14 +40,6 @@ public class RegisterRequest {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public List<String> getRoles() {

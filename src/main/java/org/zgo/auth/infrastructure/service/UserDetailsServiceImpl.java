@@ -1,4 +1,4 @@
-package org.zgo.auth.service;
+package org.zgo.auth.infrastructure.service;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

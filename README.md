@@ -111,7 +111,4 @@ Notas de seguridad
 - Rotación de refresh tokens ayuda a mitigar uso indebido, pero considera usar short-lived refresh tokens y detectores de reuse para mayor seguridad.
 - En producción guarda claves en un Secret Manager o Vault y pásalas como variables de entorno.
 
-Contacto
-- Repo: https://github.com/OmarZG/jwt-authentication-hexagonal
-- Autor: OmarZG
 ```

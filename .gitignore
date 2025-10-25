@@ -1,0 +1,116 @@
+# Recommended .gitignore for a Java / Spring Boot project with common IDEs and OS files.
+# Uncomment the lines about keys/credentials if you want to ensure private keys are NOT committed.
+
+# Maven / build
+/target/
+/build/
+/out/
+!.mvn/wrapper/maven-wrapper.jar
+
+# Compiled class files
+**/*.class
+
+# Logs
+*.log
+logs/
+hs_err_pid*
+
+# Temporary files
+*.tmp
+*.temp
+
+# IDEs
+## IntelliJ IDEA
+/.idea/
+/*.iml
+/**/workspace.xml
+/**/tasks.xml
+/**/usage.statistics.xml
+/**/shelf/
+.idea_modules/
+
+## Eclipse
+/.project
+/.classpath
+/.settings/
+/.metadata/
+/tmp/
+
+## VS Code
+.vscode/
+
+# NetBeans
+/nbproject/private/
+/build/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+# OS files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Environment / local config
+.env
+.env.local
+*.local
+*.env
+
+# Secrets / keys (recommended: DO NOT commit private keys)
+# If you want to ignore any private key files, uncomment these lines:
+# src/main/resources/jwtKeys/private.key.pem
+# **/private*.pem
+# **/*.jks
+# **/*.keystore
+# **/*.p12
+# **/*.crt
+# **/*.key
+
+# Application/runtime files
+*.pid
+*.seed
+*.dump
+*.orig
+
+# Coverage
+coverage/
+*.lcov
+
+# Docker
+docker-compose.override.yml
+
+# macOS
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# JetBrains (other)
+.idea/
+*.iml
+out/
+
+# Temporary editors/backups
+*~
+*.swp
+*.swo
+*.tmp
+*.bak
+
+# Build tools
+target/
+build/
+dist/
+.cache/
+
+# Node (if present)
+node_modules/
+
+# Misc
+.vagrant/

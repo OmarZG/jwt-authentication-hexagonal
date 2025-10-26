@@ -1,6 +1,7 @@
 # ===================================================================
 # Application Configuration
 # ===================================================================
+# noinspection LossyEncoding
 spring:
   application:
     name: jwt-authentication-hexagonal
@@ -47,7 +48,7 @@ server:
 security:
   password-encoder-strength: 10
 
-  # Public endpoints (NO requieren autenticación)
+  # Public endpoints (NO requieren autenticaciï¿½n)
   public-endpoints:
     - /api/auth/register
     - /api/auth/login

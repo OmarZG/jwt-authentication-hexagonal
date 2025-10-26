@@ -2,12 +2,10 @@ package org.zgo.auth.application.service;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.zgo.auth.application.port.in.AuthUseCase;
-import org.zgo.auth.application.port.in.RefreshTokenUseCase;
+import org.zgo.auth.application.port.in.*;
 import org.zgo.auth.application.port.out.RefreshTokenPersistencePort;
 import org.zgo.auth.application.port.out.UserPersistencePort;
 import org.zgo.auth.domain.exception.custom.InvalidCredentialsException;
@@ -15,10 +13,6 @@ import org.zgo.auth.domain.exception.custom.UserAlreadyExistsException;
 import org.zgo.auth.domain.model.RefreshToken;
 import org.zgo.auth.domain.model.Role;
 import org.zgo.auth.domain.model.User;
-import org.zgo.auth.infrastructure.web.dto.request.LoginRequest;
-import org.zgo.auth.infrastructure.web.dto.request.RefreshTokenRequest;
-import org.zgo.auth.infrastructure.web.dto.request.RegisterRequest;
-import org.zgo.auth.infrastructure.web.dto.response.AuthenticationResponse;
 import org.zgo.auth.infrastructure.service.JwtService;
 import org.zgo.auth.infrastructure.service.UserDetailsServiceImpl;
 
@@ -55,25 +49,25 @@ public class AuthServiceImpl implements AuthUseCase {
     }
 
     @Override
-    public AuthenticationResponse register(RegisterRequest request) {
-        userPersistence.findByUsername(request.getUsername()).ifPresent(u -> {
+    public AuthResult register(RegisterUserData data) {
+        userPersistence.findByUsername(data.username()).ifPresent(u -> {
             throw new UserAlreadyExistsException("username already exists");
         });
 
-        userPersistence.findByEmail(request.getEmail()).ifPresent(u -> {
+        userPersistence.findByEmail(data.email()).ifPresent(u -> {
             throw new UserAlreadyExistsException("email already exists");
         });
 
         Set<Role> roles = new HashSet<>();
         roles.add(Role.ROLE_USER);
-        if (request.getRoles() != null && request.getRoles().contains("ADMIN")) {
+        if (data.roles() != null && data.roles().contains("ADMIN")) {
             roles.add(Role.ROLE_ADMIN);
         }
 
         User user = new User();
-        user.setUsername(request.getUsername());
-        user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setUsername(data.username());
+        user.setEmail(data.email());
+        user.setPassword(passwordEncoder.encode(data.password()));
         user.setRoles(roles);
 
         User saved = userPersistence.save(user);
@@ -82,42 +76,41 @@ public class AuthServiceImpl implements AuthUseCase {
         String accessToken = jwtService.generateToken(userDetails, Map.of());
         RefreshToken refreshToken = refreshTokenUseCase.createRefreshToken(saved.getUsername());
 
-        return new AuthenticationResponse(accessToken, refreshToken.getToken());
+        return new AuthResult(accessToken, refreshToken.getToken());
     }
 
     @Override
-    public AuthenticationResponse login(LoginRequest request) {
+    public AuthResult login(LoginParameters parameters) {
         try {
-            Authentication auth = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(parameters.username(), parameters.password()) // Usa parameters
             );
         } catch (Exception ex) {
             throw new InvalidCredentialsException("Invalid username or password");
         }
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(request.getUsername());
+        UserDetails userDetails = userDetailsService.loadUserByUsername(parameters.username()); // Usa parameters
         String accessToken = jwtService.generateToken(userDetails, Map.of());
         RefreshToken refreshToken = refreshTokenUseCase.createRefreshToken(userDetails.getUsername());
 
-        return new AuthenticationResponse(accessToken, refreshToken.getToken());
+        return new AuthResult(accessToken, refreshToken.getToken());
     }
 
     @Override
-    public AuthenticationResponse refreshAccessToken(RefreshTokenRequest request) {
-        RefreshToken rt = refreshTokenPersistence.findByToken(request.getRefreshToken())
+    public AuthResult refreshAccessToken(String refreshToken) {
+        RefreshToken rt = refreshTokenPersistence.findByToken(refreshToken)
                 .orElseThrow(() -> new InvalidCredentialsException("Invalid refresh token"));
 
         if (rt.isRevoked() || rt.getExpiresAt().isBefore(Instant.now())) {
             throw new InvalidCredentialsException("Refresh token is invalid or expired");
         }
 
-        // rotate: revoke old and create a new refresh token
         refreshTokenUseCase.revokeRefreshToken(rt.getToken());
         RefreshToken newRt = refreshTokenUseCase.createRefreshToken(rt.getUsername());
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(rt.getUsername());
         String accessToken = jwtService.generateToken(userDetails, Map.of());
 
-        return new AuthenticationResponse(accessToken, newRt.getToken());
+        return new AuthResult(accessToken, newRt.getToken());
     }
 }

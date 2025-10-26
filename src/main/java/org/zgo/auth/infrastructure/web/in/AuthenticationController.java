@@ -14,6 +14,7 @@ import org.zgo.auth.infrastructure.web.dto.request.RegisterRequest;
 import org.zgo.auth.infrastructure.web.dto.request.RevokeRefreshRequest;
 import org.zgo.auth.infrastructure.web.dto.response.AuthenticationResponse;
 import org.zgo.auth.infrastructure.web.dto.response.UserResponse;
+import org.zgo.auth.infrastructure.web.mapper.AuthMapper;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -22,28 +23,35 @@ public class AuthenticationController {
     private final AuthUseCase authUseCase;
     private final UserPersistencePort userPort;
     private final RefreshTokenUseCase refreshTokenUseCase;
+    private final AuthMapper mapper;
 
-    public AuthenticationController(AuthUseCase authUseCase, UserPersistencePort userPort, RefreshTokenUseCase refreshTokenUseCase) {
+    public AuthenticationController(AuthUseCase authUseCase, UserPersistencePort userPort, RefreshTokenUseCase refreshTokenUseCase, AuthMapper mapper) {
         this.authUseCase = authUseCase;
         this.userPort = userPort;
         this.refreshTokenUseCase = refreshTokenUseCase;
+        this.mapper = mapper;
     }
 
     @PostMapping("/register")
     public ResponseEntity<AuthenticationResponse> register(@Valid @RequestBody RegisterRequest request) {
-        AuthenticationResponse response = authUseCase.register(request);
+        var data = mapper.toRegisterUserData(request);
+        var result = authUseCase.register(data);
+        AuthenticationResponse response = mapper.toAuthenticationResponse(result);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(@Valid @RequestBody LoginRequest request) {
-        AuthenticationResponse response = authUseCase.login(request);
+        var parameters = mapper.toLoginParameters(request);
+        var result = authUseCase.login(parameters);
+        AuthenticationResponse response = mapper.toAuthenticationResponse(result);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/refresh")
     public ResponseEntity<AuthenticationResponse> refresh(@Valid @RequestBody RefreshTokenRequest request) {
-        AuthenticationResponse response = authUseCase.refreshAccessToken(request);
+        var result = authUseCase.refreshAccessToken(request.getRefreshToken());
+        AuthenticationResponse response = mapper.toAuthenticationResponse(result);
         return ResponseEntity.ok(response);
     }
 
@@ -61,10 +69,9 @@ public class AuthenticationController {
         if (authentication == null) return ResponseEntity.notFound().build();
         String username = authentication.getName();
         return userPort.findByUsername(username)
-                .map(u -> {
-                    UserResponse ur = new UserResponse(u.getId(), u.getUsername(), u.getEmail(), u.getRoles().stream().map(Enum::name).toList());
-                    return ResponseEntity.ok(ur);
-                })
+                .map(mapper::toUserResult)
+                .map(mapper::toUserResponse)
+                .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 

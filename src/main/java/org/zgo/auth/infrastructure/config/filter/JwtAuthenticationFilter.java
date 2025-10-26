@@ -29,11 +29,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     // Rutas que deben saltar este filtro
     private static final List<String> EXCLUDED_PATHS = Arrays.asList(
+            // Swagger/OpenAPI
             "/v3/api-docs",
             "/swagger-ui",
             "/swagger-resources",
             "/webjars",
-            "/api/auth"
+            // H2 Console
+            "/h2-console",
+            // Endpoints públicos de autenticación
+            "/api/auth/register",
+            "/api/auth/login",
+            "/api/auth/refresh",
+            "/api/auth/revoke",
+            // Actuator
+            "/actuator/health",
+            "/actuator/info"
     );
 
     public JwtAuthenticationFilter(JwtService jwtService, UserDetailsServiceImpl userDetailsService) {

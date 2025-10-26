@@ -7,9 +7,10 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.zgo.auth.domain.exception.custom.InvalidCredentialsException;
+import org.zgo.auth.domain.exception.custom.UserAlreadyExistsException;
 import org.zgo.auth.infrastructure.web.dto.response.ErrorResponse;
-import org.zgo.auth.exception.custom.InvalidCredentialsException;
-import org.zgo.auth.exception.custom.UserAlreadyExistsException;
+
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {

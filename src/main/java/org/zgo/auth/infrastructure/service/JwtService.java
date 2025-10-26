@@ -58,19 +58,23 @@ public class JwtService {
     }
 
     public String generateToken(UserDetails userDetails, Map<String, Object> extraClaims) {
-        Claims claims = Jwts.claims();
-        if (extraClaims != null) claims.putAll(extraClaims);
+     var claimsBuilder = Jwts.claims();
+
+     if (extraClaims != null) {
+            claimsBuilder.add(extraClaims);
+        }
+
         List<String> roles = userDetails.getAuthorities().stream().map(a -> a.getAuthority()).toList();
-        claims.put("roles", roles);
+        claimsBuilder.add("roles", roles);
 
         Instant now = Instant.now();
         Instant expiry = now.plusMillis(jwtExpirationMs);
 
         return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(userDetails.getUsername())
-                .setIssuedAt(Date.from(now))
-                .setExpiration(Date.from(expiry))
+                .claims(claimsBuilder.build())
+                .subject(userDetails.getUsername())
+                .issuedAt(Date.from(now))
+                .expiration(Date.from(expiry))
                 .signWith(privateKey, SignatureAlgorithm.RS256)
                 .compact();
     }
@@ -94,11 +98,11 @@ public class JwtService {
     }
 
     private Claims getClaims(String token) {
-        return Jwts.parserBuilder()
+        return Jwts.parser()
                 .setSigningKey(publicKey)
                 .build()
                 .parseClaimsJws(token)
-                .getBody();
+                .getPayload();
     }
 
     // PEM parsing helpers - tolerant with different PEM header/footer variants and whitespace

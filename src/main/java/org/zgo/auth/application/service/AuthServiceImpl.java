@@ -10,6 +10,8 @@ import org.zgo.auth.application.port.in.AuthUseCase;
 import org.zgo.auth.application.port.in.RefreshTokenUseCase;
 import org.zgo.auth.application.port.out.RefreshTokenPersistencePort;
 import org.zgo.auth.application.port.out.UserPersistencePort;
+import org.zgo.auth.domain.exception.custom.InvalidCredentialsException;
+import org.zgo.auth.domain.exception.custom.UserAlreadyExistsException;
 import org.zgo.auth.domain.model.RefreshToken;
 import org.zgo.auth.domain.model.Role;
 import org.zgo.auth.domain.model.User;
@@ -17,8 +19,6 @@ import org.zgo.auth.infrastructure.web.dto.request.LoginRequest;
 import org.zgo.auth.infrastructure.web.dto.request.RefreshTokenRequest;
 import org.zgo.auth.infrastructure.web.dto.request.RegisterRequest;
 import org.zgo.auth.infrastructure.web.dto.response.AuthenticationResponse;
-import org.zgo.auth.exception.custom.InvalidCredentialsException;
-import org.zgo.auth.exception.custom.UserAlreadyExistsException;
 import org.zgo.auth.infrastructure.service.JwtService;
 import org.zgo.auth.infrastructure.service.UserDetailsServiceImpl;
 
